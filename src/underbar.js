@@ -216,20 +216,34 @@
   // Determine whether all of the elements match a truth test.
   // output is boolean
   _.every = function(collection, iterator) {
-    if (iterator === undefined) {
-      _.each(collection, function(item, index, collection) {
-        if (!!item === false) {
+
+    return _.reduce(collection, function(accumulator, item) {
+      if (iterator === undefined) {
+        if (accumulator === true) {
+          return !!item;
+        }
+        return false;
+      } else if (typeof iterator(item) !== 'boolean') {
+        if (accumulator === false) {
           return false;
         }
-      });
-    }
-    // do we not return here??
-    return _.reduce(collection, function(accumulator, item) {
-      if (!iterator(item)) {
-        return false;
+        return !!iterator(item);
+      } else {
+        if (accumulator === false) {
+          return false;
+        }
+        return iterator(item);
       }
+      // return accumulator;
     }, true);
   };
+
+  // if (iterator === undefined) {
+  //   if (accumulator === true) {
+  //     accumulator = !!item;
+  //   }
+  //   return false;
+  // }
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
